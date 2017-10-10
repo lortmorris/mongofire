@@ -1,0 +1,38 @@
+{
+  "name": "mongofire",
+  "version": "1.0.0",
+  "description": "Make MongoDB for Real Time Applications. Reactive DB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lortmorris/mongofire.git"
+  },
+  "keywords": [
+    "mongodb",
+    "reactivedb",
+    "real",
+    "time",
+    "database"
+  ],
+  "author": "Cesar Casas <cesarcasas@bsdsolutions.com.ar> (https://ar.linkedin.com/in/cesarcasas)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lortmorris/mongofire/issues"
+  },
+  "homepage": "https://github.com/lortmorris/mongofire#readme",
+  "dependencies": {
+    "mongojs": "^2.4.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.0",
+    "debug": "^3.1.0",
+    "eslint": "^4.7.2",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0"
+  }
+}
