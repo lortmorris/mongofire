@@ -19,7 +19,6 @@ function mongofire(url = '', collections) {
 
 
   collections.forEach((col) => {
-    const nativeMethod = {};
     db[col].on = methodOn(col);
     registeredCollections[col] = {};
 
@@ -27,9 +26,7 @@ function mongofire(url = '', collections) {
       debug('adding method ', event, '  on ', col);
 
       registeredCollections[col][`on${event}Listeners`] = {};
-      nativeMethod[`__${event}`] = db[col][event];
-      console.info('db[col][event]: ', db[col][event]);
-      db[col][event] = function hand() {
+      db[col][`$${event}`] = function hand() {
         const args = Array.from(arguments);
         const cb = args.pop();
 
@@ -40,10 +37,48 @@ function mongofire(url = '', collections) {
         }; // end handler
 
         args.push(handler);
-        nativeMethod[`__${event}`](args[0], args[1], args[2]);
-        console.info('after end');
+        return db[col][`${event}`](args[0], args[1], args[2]);
       };
     });
+
+    db[col].$schema = (schema) => {
+      const fields = Object.keys(schema);
+      return fields.map((field) => {
+        const conf = schema[field];
+        if ('$from' in conf) {
+          const cb = ($localconf) => {
+            db[$localconf.$from].on('insert', (err, docs) => {
+              if ('$count' in $localconf) {
+                db[$localconf.$from].find($localconf.$count.query).count((e, result) => {
+                  db[$localconf.collection].findOne($localconf.$count.where, {}, (e2, d2) => {
+                    if (d2) {
+                      return db[$localconf.collection].update({}, { $set: { [field]: result } });
+                    }
+                    return db[$localconf.collection].insert({ [field]: result });
+                  });
+                });
+              }// is $count method
+
+              if ('$sum' in $localconf) {
+                db[$localconf.$from].find($localconf.$sum.query, (e, result) => {
+                  const total = result.reduce((acc, current) => {
+                    return { total: acc.total += current[$localconf.$sum.prop] };
+                  }, { total: 0 });
+                  db[$localconf.collection].findOne($localconf.$sum.where, {}, (e2, d2) => {
+                    if (d2) {
+                      return db[$localconf.collection].update({}, { $set: { [field]: total.total } });
+                    }
+                    return db[$localconf.collection].insert({ [field]: total });
+                  });
+                });
+              }// is $count method
+            });
+          };
+          cb(Object.assign({}, conf, { collection: col, field }));
+        }
+        return null;
+      });
+    };
   });// end forEach
   return db;
 }
