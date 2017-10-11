@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/lortmorris/mongofire#readme",
   "dependencies": {
-    "mongojs": "^2.4.1"
+    "mongojs": "^2.4.1",
+    "debug": "^3.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.0",
-    "debug": "^3.1.0",
     "eslint": "^4.7.2",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
